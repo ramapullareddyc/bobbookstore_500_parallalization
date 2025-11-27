@@ -77,8 +77,10 @@ namespace Bookstore.Domain.Books
         [Column("Quantity_mod")]
         public int Quantity { get; set; }
 
+        [NotMapped]
         public bool IsInStock => Quantity > 0;
 
+        [NotMapped]
         public bool IsLowInStock => Quantity <= LowBookThreshold;
 
         public void ReduceStockLevel(int quantity)

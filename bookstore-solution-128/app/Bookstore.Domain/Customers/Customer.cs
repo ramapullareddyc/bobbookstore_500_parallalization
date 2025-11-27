@@ -18,6 +18,7 @@ namespace Bookstore.Domain.Customers
         [Column("LastName_mod")]
         public string? LastName { get; set; }
 
+        [NotMapped]
         public string FullName => $"{FirstName} {LastName}";
 
         [Column("Email_mod")]

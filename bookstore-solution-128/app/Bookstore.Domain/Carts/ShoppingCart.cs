@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 
 namespace Bookstore.Domain.Carts
 {

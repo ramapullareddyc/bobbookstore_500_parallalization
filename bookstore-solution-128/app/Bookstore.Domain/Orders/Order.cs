@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using Bookstore.Domain.Addresses;
 using Bookstore.Domain.Books;
 using Bookstore.Domain.Customers;
@@ -34,10 +34,13 @@ namespace Bookstore.Domain.Orders
         [Column("OrderStatus_mod")]
         public OrderStatus OrderStatus { get; set; } = OrderStatus.Pending;
 
+        [NotMapped]
         public decimal Tax => SubTotal * 0.1m;
 
+        [NotMapped]
         public decimal SubTotal => OrderItems.Sum(x => x.Book.Price);
 
+        [NotMapped]
         public decimal Total => SubTotal + Tax;
 
         public void AddOrderItem(Book book, int quantity)
