@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Bookstore.Data;
 using Bookstore.Domain.Authors;
 using Npgsql;
+using NpgsqlParameter = Npgsql.NpgsqlParameter;
 
 
 namespace Bookstore.Web.Controllers
@@ -26,7 +27,7 @@ namespace Bookstore.Web.Controllers
         {
             return View(await FindAllAuthorsEmbeddedSql());
         }
-
+        
         // GET: Authors/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -77,12 +78,12 @@ namespace Bookstore.Web.Controllers
             }
 
             var author = await _context.Author.FindAsync(id);
-
+            
             if (author == null)
             {
                 return NotFound();
             }
-
+            
             return View(author);
         }
 
@@ -125,7 +126,7 @@ namespace Bookstore.Web.Controllers
         {
             return _context.Author.Any(e => e.BusinessEntityID == id);
         }
-
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("BusinessEntityID,NationalIDNumber,LoginID,JobTitle,BirthDate,MaritalStatus,Gender,HireDate,SalariedFlag,VacationHours,ModifiedDate")] Author author)
@@ -149,20 +150,20 @@ namespace Bookstore.Web.Controllers
                         return NotFound();
                     }
                 }
-
+                
                 return RedirectToAction(nameof(Index));
             }
-
+            
             return View(author);
         }
-
+        
         public async Task<bool> EditUsingStoredProcedure(int businessEntityId, string nationalIdNumber, DateTime birthDate, string maritalStatus, string gender)
         {
             try
             {
-                string sql = @"CALL uspUpdateAuthorPersonalInfo(@BusinessEntityID, @NationalIDNumber, @BirthDate, @MaritalStatus, @Gender)";
+                string sql = @"DECLARE @rowsAffected INT;EXEC @rowsAffected = [dbo].[uspUpdateAuthorPersonalInfo] @BusinessEntityID, @NationalIDNumber, @BirthDate, @MaritalStatus, @Gender;SELECT @rowsAffected;";
 
-                var rowsAffected = await _context.Database.ExecuteSqlRawAsync(sql,
+                var rowsAffected = await _context.Database.ExecuteSqlRawAsync(sql, 
                     new NpgsqlParameter("@BusinessEntityID", businessEntityId),
                     new NpgsqlParameter("@NationalIDNumber", nationalIdNumber),
                     new NpgsqlParameter("@BirthDate", birthDate.ToUniversalTime()),
@@ -184,7 +185,7 @@ namespace Bookstore.Web.Controllers
             try
             {
                 // Build the SQL command
-                string sql = @"SELECT * FROM Author";
+                string sql = @"SELECT * FROM database-1_dbo.Author_mod";
 
                 // Execute the SQL command and get the number of rows affected
                 var results = await _context.Database.SqlQueryRaw<Author>(sql).ToListAsync();
@@ -205,7 +206,7 @@ namespace Bookstore.Web.Controllers
             try
             {
                 // Build the SQL command
-                string sql = @"CALL uspDeleteAuthor(@BusinessEntityID)";
+                string sql = @"DECLARE @rowsAffected INT;EXEC @rowsAffected = [dbo].[uspDeleteAuthor] @BusinessEntityID;SELECT @rowsAffected;";
 
                 // Execute the SQL command and get the number of rows affected
                 var rowsAffected = await _context.Database.ExecuteSqlRawAsync(sql, new NpgsqlParameter("@BusinessEntityID", businessEntityId));
@@ -225,7 +226,7 @@ namespace Bookstore.Web.Controllers
             try
             {
                 // Build the SQL command
-                string sql = @"SELECT ""BusinessEntityID"", TO_CHAR(""ModifiedDate"", 'YYYY-MM-DD HH24:MI:SS') AS ""FormattedModifiedDate"", EXTRACT(YEAR FROM AGE(CURRENT_DATE, ""BirthDate"")) AS ""Age"" FROM ""Author"" WHERE EXTRACT(YEAR FROM ""HireDate"") = @HireDate;";
+                string sql = @"SELECT BusinessEntityID, TO_CHAR(ModifiedDate, 'YYYY-MM-DD HH24:MI:SS') AS FormattedModifiedDate, EXTRACT(YEAR FROM AGE(CURRENT_TIMESTAMP, BirthDate)) AS Age FROM database-1_dbo.Author_mod WHERE EXTRACT(YEAR FROM HireDate) = @HireDate;";
 
                 // Execute the SQL command and get the number of rows affected
                 var results = await _context.Database.SqlQueryRaw<AuthorAgeResult>(sql, new NpgsqlParameter("@HireDate", hireYear)).ToListAsync();
@@ -239,7 +240,7 @@ namespace Bookstore.Web.Controllers
                 return null;
             }
         }
-
+        
         public async Task<IActionResult> OtherAuthors(int hireYear)
         {
             var authors = await SelectAuthorsByHireYear(hireYear);
