@@ -1,7 +1,11 @@
-﻿using Bookstore.Domain.Customers;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Bookstore.Domain.Customers;
 
 namespace Bookstore.Domain.Addresses
 {
+    [Table("Address_mod", Schema = "database-1_dbo")]
     public class Address : Entity
     {
         // An empty constructor is required by EF Core
@@ -21,21 +25,29 @@ namespace Bookstore.Domain.Addresses
             ZipCode = zipCode;
         }
 
+        [Column("AddressLine1_mod")]
         public string AddressLine1 { get; set; }
 
+        [Column("AddressLine2_mod")]
         public string? AddressLine2 { get; set; }
 
+        [Column("City_mod")]
         public string City { get; set; }
 
+        [Column("State_mod")]
         public string State { get; set; }
 
+        [Column("Country_mod")]
         public string Country { get; set; }
 
+        [Column("ZipCode_mod")]
         public string ZipCode { get; set; }
 
+        [Column("CustomerId_mod")]
         public int CustomerId { get; set; }
         public Customer Customer { get; set; }
 
+        [Column("IsActive_mod")]
         public bool IsActive { get; set; } = true;
     }
 }
