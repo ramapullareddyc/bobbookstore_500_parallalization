@@ -8,6 +8,7 @@ namespace Bookstore.Data
     {
         private void PopulateDatabase(ModelBuilder modelBuilder)
         {
+            // Note: Seed data uses entity properties, EF Core will map to configured column names
             modelBuilder.Entity<ReferenceDataItem>().HasData(
                 new ReferenceDataItem(ReferenceDataType.BookType, "Hardcover") { Id = 1 },
                 new ReferenceDataItem(ReferenceDataType.BookType, "Trade Paperback") { Id = 2 },
