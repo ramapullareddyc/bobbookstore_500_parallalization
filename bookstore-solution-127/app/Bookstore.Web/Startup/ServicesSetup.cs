@@ -89,16 +89,7 @@ namespace Bookstore.Web.Startup
                     PropertyNameCaseInsensitive = true
                 });
 
-                var builder = new NpgsqlConnectionStringBuilder
-                {
-                    Host = dbSecrets.Host,
-                    Database = "BobsUsedBookStore",
-                    Username = dbSecrets.Username,
-                    Password = dbSecrets.Password
-                };
-                builder.Port = Convert.ToInt32(dbSecrets.Port);
-
-                connString = builder.ConnectionString;
+                connString = $"Host={dbSecrets.Host};Port={dbSecrets.Port};Database=BobsUsedBookStore;Username={dbSecrets.Username};Password={dbSecrets.Password}";
             }
             catch (AmazonSecretsManagerException e)
             {

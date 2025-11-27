@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Bookstore.Domain.Addresses;
 using Bookstore.Domain.Authors;
 using Bookstore.Domain.Books;
@@ -41,7 +41,7 @@ namespace Bookstore.Data
         public DbSet<Offer> Offer { get; set; }
 
         public DbSet<Author> Author { get; set; }
-
+        
         public DbSet<Product> Product { get; set; }
 
 
@@ -49,7 +49,7 @@ namespace Bookstore.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Address entity configuration
+            // Apply table and column mappings for Address entity
             modelBuilder.Entity<Address>(entity =>
             {
                 entity.ToTable("Address_mod", "database-1_dbo");
@@ -67,7 +67,7 @@ namespace Bookstore.Data
                 entity.Property(e => e.UpdatedOn).HasColumnName("UpdatedOn_mod");
             });
 
-            // Book entity configuration
+            // Apply table and column mappings for Book entity
             modelBuilder.Entity<Book>(entity =>
             {
                 entity.ToTable("Book_mod", "database-1_dbo");
@@ -84,16 +84,20 @@ namespace Bookstore.Data
                 entity.Property(e => e.Summary).HasColumnName("Summary_mod");
                 entity.Property(e => e.Price).HasColumnName("Price_mod");
                 entity.Property(e => e.Quantity).HasColumnName("Quantity_mod");
+                entity.Property(e => e.IsInStock).HasColumnName("IsInStock_mod").HasConversion<int>();
+                entity.Property(e => e.IsLowInStock).HasColumnName("IsLowInStock_mod").HasConversion<int>();
                 entity.Property(e => e.CreatedBy).HasColumnName("CreatedBy_mod");
                 entity.Property(e => e.CreatedOn).HasColumnName("CreatedOn_mod");
                 entity.Property(e => e.UpdatedOn).HasColumnName("UpdatedOn_mod");
+                
+                // Preserve existing relationships
                 entity.HasOne(x => x.Publisher).WithMany().HasForeignKey(x => x.PublisherId).OnDelete(DeleteBehavior.Restrict);
                 entity.HasOne(x => x.BookType).WithMany().HasForeignKey(x => x.BookTypeId).OnDelete(DeleteBehavior.Restrict);
                 entity.HasOne(x => x.Genre).WithMany().HasForeignKey(x => x.GenreId).OnDelete(DeleteBehavior.Restrict);
                 entity.HasOne(x => x.Condition).WithMany().HasForeignKey(x => x.ConditionId).OnDelete(DeleteBehavior.Restrict);
             });
 
-            // Customer entity configuration
+            // Apply table and column mappings for Customer entity
             modelBuilder.Entity<Customer>(entity =>
             {
                 entity.ToTable("Customer_mod", "database-1_dbo");
@@ -109,10 +113,12 @@ namespace Bookstore.Data
                 entity.Property(e => e.CreatedBy).HasColumnName("CreatedBy_mod");
                 entity.Property(e => e.CreatedOn).HasColumnName("CreatedOn_mod");
                 entity.Property(e => e.UpdatedOn).HasColumnName("UpdatedOn_mod");
+                
+                // Preserve existing index
                 entity.HasIndex(x => x.Sub).IsUnique();
             });
 
-            // Order entity configuration
+            // Apply table and column mappings for Order entity
             modelBuilder.Entity<Order>(entity =>
             {
                 entity.ToTable("Order_mod", "database-1_dbo");
@@ -127,10 +133,12 @@ namespace Bookstore.Data
                 entity.Property(e => e.CreatedBy).HasColumnName("CreatedBy_mod");
                 entity.Property(e => e.CreatedOn).HasColumnName("CreatedOn_mod");
                 entity.Property(e => e.UpdatedOn).HasColumnName("UpdatedOn_mod");
+                
+                // Preserve existing relationships
                 entity.HasOne(x => x.Customer).WithMany().OnDelete(DeleteBehavior.Restrict);
             });
 
-            // ShoppingCart entity configuration
+            // Apply table and column mappings for ShoppingCart entity
             modelBuilder.Entity<ShoppingCart>(entity =>
             {
                 entity.ToTable("ShoppingCart_mod", "database-1_dbo");
@@ -141,7 +149,7 @@ namespace Bookstore.Data
                 entity.Property(e => e.UpdatedOn).HasColumnName("UpdatedOn_mod");
             });
 
-            // ShoppingCartItem entity configuration
+            // Apply table and column mappings for ShoppingCartItem entity
             modelBuilder.Entity<ShoppingCartItem>(entity =>
             {
                 entity.ToTable("ShoppingCartItem_mod", "database-1_dbo");
@@ -155,7 +163,7 @@ namespace Bookstore.Data
                 entity.Property(e => e.UpdatedOn).HasColumnName("UpdatedOn_mod");
             });
 
-            // OrderItem entity configuration
+            // Apply table and column mappings for OrderItem entity
             modelBuilder.Entity<OrderItem>(entity =>
             {
                 entity.ToTable("OrderItem_mod", "database-1_dbo");
@@ -168,7 +176,7 @@ namespace Bookstore.Data
                 entity.Property(e => e.UpdatedOn).HasColumnName("UpdatedOn_mod");
             });
 
-            // Offer entity configuration
+            // Apply table and column mappings for Offer entity
             modelBuilder.Entity<Offer>(entity =>
             {
                 entity.ToTable("Offer_mod", "database-1_dbo");
@@ -189,13 +197,15 @@ namespace Bookstore.Data
                 entity.Property(e => e.CreatedBy).HasColumnName("CreatedBy_mod");
                 entity.Property(e => e.CreatedOn).HasColumnName("CreatedOn_mod");
                 entity.Property(e => e.UpdatedOn).HasColumnName("UpdatedOn_mod");
+                
+                // Preserve existing relationships
                 entity.HasOne(x => x.Publisher).WithMany().HasForeignKey(x => x.PublisherId).OnDelete(DeleteBehavior.Restrict);
                 entity.HasOne(x => x.BookType).WithMany().HasForeignKey(x => x.BookTypeId).OnDelete(DeleteBehavior.Restrict);
                 entity.HasOne(x => x.Genre).WithMany().HasForeignKey(x => x.GenreId).OnDelete(DeleteBehavior.Restrict);
                 entity.HasOne(x => x.Condition).WithMany().HasForeignKey(x => x.ConditionId).OnDelete(DeleteBehavior.Restrict);
             });
 
-            // Author entity configuration
+            // Apply table and column mappings for Author entity
             modelBuilder.Entity<Author>(entity =>
             {
                 entity.ToTable("Author_mod", "database-1_dbo");
@@ -211,7 +221,7 @@ namespace Bookstore.Data
                 entity.Property(e => e.ModifiedDate).HasColumnName("ModifiedDate_mod");
             });
 
-            // Product entity configuration
+            // Apply table and column mappings for Product entity
             modelBuilder.Entity<Product>(entity =>
             {
                 entity.ToTable("Product_mod", "database-1_dbo");
@@ -221,7 +231,7 @@ namespace Bookstore.Data
                 entity.Property(e => e.SafetyStockLevel).HasColumnName("SafetyStockLevel_mod");
             });
 
-            // ReferenceDataItem entity configuration
+            // Apply table and column mappings for ReferenceDataItem entity
             modelBuilder.Entity<ReferenceDataItem>(entity =>
             {
                 entity.ToTable("ReferenceData_mod", "database-1_dbo");
