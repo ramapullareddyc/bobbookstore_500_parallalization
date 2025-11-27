@@ -1,9 +1,16 @@
-﻿namespace Bookstore.Domain.Carts
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+
+namespace Bookstore.Domain.Carts
 {
+    [Table("ShoppingCart_mod", Schema = "database-1_dbo")]
     public class ShoppingCart : Entity
     {
         public List<ShoppingCartItem> ShoppingCartItems { get; private set; } = new();
 
+        [Column("CorrelationId_mod")]
         public string CorrelationId { get; set; }
 
         public ShoppingCart(string correlationId)
